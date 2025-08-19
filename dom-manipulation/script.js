@@ -20,13 +20,15 @@ function showRandomQuote() {
   }
 
   if (filteredQuotes.length === 0) {
-    quoteDisplay.textContent = "No quotes available in this category.";
+    quoteDisplay.innerHTML = "<em>No quotes available in this category.</em>";
     return;
   }
 
   const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
   const randomQuote = filteredQuotes[randomIndex];
-  quoteDisplay.textContent = `"${randomQuote.text}" — [${randomQuote.category}]`;
+
+  // ✅ using innerHTML here
+  quoteDisplay.innerHTML = `"${randomQuote.text}" <br><small>[${randomQuote.category}]</small>`;
 }
 
 // Function to add new quote
@@ -54,7 +56,8 @@ function addQuote() {
   document.getElementById("newQuoteText").value = "";
   document.getElementById("newQuoteCategory").value = "";
 
-  alert("Quote added successfully!");
+  // ✅ Show feedback with innerHTML
+  quoteDisplay.innerHTML = `<span style="color: green;">Quote added successfully!</span>`;
 }
 
 // Event listeners
