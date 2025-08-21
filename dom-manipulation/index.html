@@ -11,25 +11,14 @@
 
   <!-- Quote Display -->
   <div id="quoteDisplay">Click the button to see a quote</div>
-  <button onclick="newQuote()">New Quote</button>
+  <button id="newQuoteBtn">New Quote</button>
 
-  <!-- Add Quote Form -->
+  <!-- Add Quote Form (injected dynamically) -->
   <div id="formContainer"></div>
-  <script>
-    // create the form when page loads
-    window.onload = function () {
-      createAddQuoteForm();
-
-      const lastQuote = sessionStorage.getItem("lastQuote");
-      if (lastQuote) {
-        document.getElementById("quoteDisplay").innerHTML = lastQuote;
-      }
-    };
-  </script>
 
   <!-- Import / Export Controls -->
   <div class="storage-controls">
-    <button onclick="exportToJsonFile()">Export Quotes (JSON)</button>
+    <button id="exportBtn">Export Quotes (JSON)</button>
     <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
   </div>
 

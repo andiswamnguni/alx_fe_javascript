@@ -5,7 +5,7 @@ let quotes = [
   "Success is not in what you have, but who you are.",
 ];
 
-// Load quotes from local storage when the app starts
+// Load quotes from local storage
 function loadQuotes() {
   const storedQuotes = localStorage.getItem("quotes");
   if (storedQuotes) {
@@ -24,21 +24,29 @@ function newQuote() {
   const randomIndex = Math.floor(Math.random() * quotes.length);
   document.getElementById("quoteDisplay").innerHTML = quotes[randomIndex];
 
-  // Save last viewed quote to session storage
+  // Save last viewed quote in session storage
   sessionStorage.setItem("lastQuote", quotes[randomIndex]);
 }
 
-// Create Add Quote Form dynamically
+// Dynamically create Add Quote form
 function createAddQuoteForm() {
   const formContainer = document.getElementById("formContainer");
+  formContainer.innerHTML = "";
 
-  formContainer.innerHTML = `
-    <input type="text" id="newQuoteInput" placeholder="Enter your quote" />
-    <button onclick="addQuote()">Add Quote</button>
-  `;
+  const input = document.createElement("input");
+  input.type = "text";
+  input.id = "newQuoteInput";
+  input.placeholder = "Enter your quote";
+
+  const button = document.createElement("button");
+  button.textContent = "Add Quote";
+  button.addEventListener("click", addQuote); // ✅ event listener instead of onclick
+
+  formContainer.appendChild(input);
+  formContainer.appendChild(button);
 }
 
-// Add a new quote from user input
+// Add a new quote
 function addQuote() {
   const newQuote = document.getElementById("newQuoteInput").value.trim();
   if (newQuote) {
@@ -51,7 +59,7 @@ function addQuote() {
   }
 }
 
-// Export quotes to a JSON file
+// Export quotes to JSON file
 function exportToJsonFile() {
   const dataStr = JSON.stringify(quotes, null, 2);
   const blob = new Blob([dataStr], { type: "application/json" });
@@ -65,7 +73,7 @@ function exportToJsonFile() {
   URL.revokeObjectURL(url);
 }
 
-// Import quotes from a JSON file
+// Import quotes from JSON file
 function importFromJsonFile(event) {
   const fileReader = new FileReader();
   fileReader.onload = function (e) {
@@ -77,10 +85,16 @@ function importFromJsonFile(event) {
   fileReader.readAsText(event.target.files[0]);
 }
 
-// Load last viewed quote from session storage (optional feature)
-window.onload = function () {
+// ✅ Attach all event listeners after DOM loads
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("newQuoteBtn").addEventListener("click", newQuote);
+  document.getElementById("exportBtn").addEventListener("click", exportToJsonFile);
+
+  createAddQuoteForm();
+
+  // Load last viewed quote from session storage
   const lastQuote = sessionStorage.getItem("lastQuote");
   if (lastQuote) {
     document.getElementById("quoteDisplay").innerHTML = lastQuote;
   }
-};
+});
