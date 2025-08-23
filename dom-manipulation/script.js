@@ -31,7 +31,7 @@ function showNotification(message) {
 }
 
 // --- Server Sync (simulation with JSONPlaceholder) ---
-async function fetchFromServer() {
+async function fetchQuotesFromServer() {
   try {
     const res = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=5");
     const serverData = await res.json();
@@ -194,7 +194,7 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("newQuoteBtn").addEventListener("click", filterQuotes);
   document.getElementById("exportBtn").addEventListener("click", exportToJsonFile);
   document.getElementById("categoryFilter").addEventListener("change", filterQuotes);
-  document.getElementById("syncBtn").addEventListener("click", fetchFromServer);
+  document.getElementById("syncBtn").addEventListener("click", fetchQuotesFromServer);
 
   createAddQuoteForm();
   populateCategories();
@@ -208,4 +208,4 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 // --- Auto sync every 15s ---
-setInterval(fetchFromServer, 15000);
+setInterval(fetchQuotesFromServer, 15000);
