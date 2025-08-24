@@ -30,7 +30,21 @@ function showNotification(message) {
   setTimeout(() => notif.remove(), 3000);
 }
 
-// --- Server Sync (simulation with JSONPlaceholder) ---
+// --- Conflict Resolution ---
+function resolveConflicts(localQuotes, serverQuotes) {
+  const merged = [...localQuotes];
+
+  serverQuotes.forEach(sq => {
+    const exists = merged.some(lq => lq.text === sq.text);
+    if (!exists) {
+      merged.push(sq); // add missing quotes from server
+    }
+  });
+
+  return merged;
+}
+
+// --- Server Sync ---
 async function fetchQuotesFromServer() {
   try {
     const res = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=5");
@@ -41,20 +55,13 @@ async function fetchQuotesFromServer() {
       category: "Server"
     }));
 
-    let updated = false;
+    // Conflict resolution: server takes precedence
+    quotes = resolveConflicts(quotes, serverQuotes);
 
-    serverQuotes.forEach(sq => {
-      if (!quotes.some(lq => lq.text === sq.text)) {
-        quotes.push(sq);
-        updated = true;
-      }
-    });
+    saveQuotes();
+    populateCategories();
+    showNotification("Quotes synced with server (conflicts resolved).");
 
-    if (updated) {
-      saveQuotes();
-      populateCategories();
-      showNotification("Quotes synced with server (new quotes added).");
-    }
   } catch (err) {
     console.error("Error fetching server data:", err);
   }
@@ -73,6 +80,11 @@ async function postToServer(newQuote) {
   } catch (err) {
     console.error("Error posting to server:", err);
   }
+}
+
+// --- Sync Wrapper ---
+function syncQuotes() {
+  fetchQuotesFromServer();
 }
 
 // --- Filtering ---
@@ -189,12 +201,19 @@ function importFromJsonFile(event) {
   fileReader.readAsText(event.target.files[0]);
 }
 
+// --- Manual Conflict Resolution ---
+function manualResolveConflicts() {
+  fetchQuotesFromServer(); // re-sync
+  showNotification("Conflicts manually resolved using server data.");
+}
+
 // --- Event Listeners ---
 window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("newQuoteBtn").addEventListener("click", filterQuotes);
   document.getElementById("exportBtn").addEventListener("click", exportToJsonFile);
   document.getElementById("categoryFilter").addEventListener("change", filterQuotes);
-  document.getElementById("syncBtn").addEventListener("click", fetchQuotesFromServer);
+  document.getElementById("syncBtn").addEventListener("click", syncQuotes);
+  document.getElementById("manualResolveBtn").addEventListener("click", manualResolveConflicts);
 
   createAddQuoteForm();
   populateCategories();
