@@ -60,7 +60,8 @@ async function fetchQuotesFromServer() {
 
     saveQuotes();
     populateCategories();
-    showNotification("Quotes synced with server (conflicts resolved).");
+    showNotification("Quotes synced with server!");
+
 
   } catch (err) {
     console.error("Error fetching server data:", err);
